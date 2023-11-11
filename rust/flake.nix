@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-parts = { url = "github:hercules-ci/flake-parts"; inputs.nixpkgs-lib.follows = "nixpkgs"; };
-    treefmt-nix.url = "github:numtide/treefmt-nix";
+    treefmt-nix = { url = "github:numtide/treefmt-nix"; inputs.nixpkgs.follows = "nixpkgs"; };
   };
 
   outputs = inputs:
@@ -12,7 +12,14 @@
 
       perSystem = { pkgs, lib, config, ... }:
         let
-          src = lib.sourceFilesBySuffices inputs.self [ ".rs" ".toml" "Cargo.lock" ];
+          src = lib.fileset.toSource {
+            root = ./.;
+            fileset = (lib.fileset.unions [
+              (lib.fileset.fileFilter (f: lib.hasSuffix ".rs" f.name) ./.)
+              (lib.fileset.fileFilter (f: f.name == "Cargo.toml") ./.)
+              ./Cargo.lock
+            ]);
+          };
           inherit (lib.importTOML (src + "/Cargo.toml")) package;
         in
         {
@@ -38,8 +45,7 @@
           };
 
           treefmt = {
-            projectRootFile = "flake.nix";
-            programs.nixpkgs-fmt.enable = true;
+            projectRootFile = "Cargo.toml";
             programs.rustfmt.enable = true;
           };
         };
