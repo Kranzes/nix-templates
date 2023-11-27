@@ -1,5 +1,5 @@
 {
-  outputs = { ... }: {
+  outputs = _: {
     templates = {
       rust = {
         path = ./rust;

@@ -15,7 +15,7 @@
           src = lib.fileset.toSource {
             root = ./.;
             fileset = (lib.fileset.unions [
-              (lib.fileset.fileFilter (f: lib.hasSuffix ".rs" f.name) ./.)
+              (lib.fileset.fileFilter (f: f.hasExt "rs") ./.)
               (lib.fileset.fileFilter (f: f.name == "Cargo.toml") ./.)
               ./Cargo.lock
             ]);

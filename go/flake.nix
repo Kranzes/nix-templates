@@ -15,15 +15,17 @@
           src = lib.fileset.toSource {
             root = ./.;
             fileset = (lib.fileset.unions [
-              (lib.fileset.fileFilter (f: lib.hasSuffix ".go" f.name) ./.)
+              (lib.fileset.fileFilter (f: f.hasExt "go") ./.)
               ./go.mod
               ./go.sum
             ]);
           };
           package = {
-            name = throw "package.name: package name is missing.";
-            version = throw "package.version: package version is missing.";
-            vendorHash = throw "package.version: vendorHash is missing.";
+            # Replace the following throws with strings with the appropriate values
+            name = throw "package.name: missing value";
+            version = throw "package.version: missing value";
+            # Since this is a FOD, it must first fail (empty hash) for it to tell you the correct hash
+            vendorHash = "";
           };
         in
         {
